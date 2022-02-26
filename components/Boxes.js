@@ -1,77 +1,125 @@
-import { Grid, Center, ActionIcon } from "@mantine/core";
-import { useSetState } from "@mantine/hooks";
+import { useState } from "react";
+import {
+  Grid,
+  Center,
+  ActionIcon,
+  Button,
+  Popover,
+  Image,
+  Text,
+} from "@mantine/core";
+import { useListState, randomId, useClipboard } from "@mantine/hooks";
 
 export default function Boxes() {
-  const [colorState, setColorState] = useSetState({
-    color: "gray",
-  });
-
-  const boxes = [
-    { id: 1, color: "gray" },
-    { id: 2, color: "gray" },
-    { id: 3, color: "gray" },
-    { id: 4, color: "gray" },
-    { id: 5, color: "gray" },
-    { id: 6, color: "gray" },
-    { id: 7, color: "gray" },
-    { id: 8, color: "gray" },
-    { id: 9, color: "gray" },
-    { id: 10, color: "gray" },
-    { id: 11, color: "gray" },
-    { id: 12, color: "gray" },
-    { id: 13, color: "gray" },
-    { id: 14, color: "gray" },
-    { id: 15, color: "gray" },
-    { id: 16, color: "gray" },
-    { id: 17, color: "gray" },
-    { id: 18, color: "gray" },
-    { id: 19, color: "gray" },
-    { id: 20, color: "gray" },
-    { id: 21, color: "gray" },
-    { id: 22, color: "gray" },
-    { id: 23, color: "gray" },
-    { id: 24, color: "gray" },
-    { id: 25, color: "gray" },
-    { id: 26, color: "gray" },
-    { id: 27, color: "gray" },
-    { id: 28, color: "gray" },
-    { id: 29, color: "gray" },
-    { id: 30, color: "gray" },
+  const initialValues = [
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
+    { key: randomId(), color: "gray" },
   ];
 
-  const changeColor = () => {
-    if (colorState.color === "gray") {
-      setColorState({ color: "yellow" });
-    } else if (colorState.color === "yellow") {
-      setColorState({ color: "green" });
-    } else {
-      setColorState({ color: "gray" });
-    }
-  };
+  const [values, handlers] = useListState(initialValues);
+  const [opened, setOpened] = useState(false);
+
+  const clipboard = useClipboard({ timeout: 1000 });
+
+  function showValues() {
+    let string = "";
+    //map values to show color only
+    const items = values.map((value, index) => {
+      if (index % 5 === 0) {
+        string += "\n";
+      }
+      if (value.color === "gray") {
+        string += "⬛";
+      }
+      if (value.color === "yellow") {
+        string += "🟨";
+      }
+      if (value.color === "green") {
+        string += "🟩";
+      }
+    });
+    setOpened(true);
+    clipboard.copy(string);
+    console.log(string);
+  }
 
   return (
-    <Center style={{ width: 450, height: 550 }}>
-      <Grid columns={5}>
-        {/* <Grid.Col span={1}>
-          <ActionIcon
-            size="80px"
-            radius="5px"
-            variant="filled"
-            color={state.color}
-            onClick={() => changeColor()}
-          ></ActionIcon>
-        </Grid.Col> */}
-        {boxes.map((box) => (
-          <Grid.Col span={1} key={box.id}>
+    <Center sx={{ width: 350, height: 600, marginLeft: 15}}>
+      <Grid columns={5} >
+        {values.map((box, index) => (
+          <Grid.Col span={1} key={box.key}>
             <ActionIcon
-              size="80px"
+              size="65px"
               radius="5px"
               variant="filled"
-              color={colorState.color}
-              onClick={() => changeColor(box.id)}
+              color={box.color}
+              onClick={(event) =>
+                handlers.setItemProp(
+                  index,
+                  "color",
+                  box.color == "gray" ? "yellow"
+                    : box.color == "yellow"
+                    ? "green" : "gray"
+                )
+              }
             ></ActionIcon>
           </Grid.Col>
         ))}
+        <Grid.Col span={5}>
+          <Center>
+            <Popover
+              opened={opened}
+              onClose={() => setOpened(false)}
+              target={
+                <Button
+                  size="xl"
+                  color={clipboard.copied ? "teal" : "blue"}
+                  onClick={showValues}
+                >
+                  {clipboard.copied ? "Copied" : "Copy"}
+                </Button>
+              }
+              width={200}
+              withArrow
+              position="left"
+              radius="md"
+              shadow="md"
+              gutter={15}
+            >
+              <div style={{ display: "flex" }}>
+                <Text size="sm">Now paste it on Discord or wherever!</Text>
+              </div>
+            </Popover>
+          </Center>
+        </Grid.Col>
       </Grid>
     </Center>
   );
