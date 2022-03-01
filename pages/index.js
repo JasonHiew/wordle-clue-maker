@@ -12,6 +12,7 @@ export default function Home() {
           <Head>
             <title>Wordle Clue Maker</title>
             <link rel="icon" href="/favicon.ico" />
+            <meta name="google-site-verification" content="9z7hnEJBi7Tl3MMIFxkxRAuT7pdy-AU3i9zkI-iHdzc" />
             <meta property="og:type" content="website" />
             <meta
               name="description"
